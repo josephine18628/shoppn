@@ -1,3 +1,49 @@
+<?php
+session_start();
+$errorMessage = "";
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    require_once __DIR__ . "/../core/db_class.php";
+    $db = new Database();
+    $conn = $db -> getConnection();
+
+    $email = trim($_POST["email"]);
+    $password = ($_POST["password"]);
+
+    $stmt = $conn->prepare("SELECT customer_id, customer_name, customer_pass, user_role FROM customer WHERE customer_email = ?");
+    $stmt -> bind_param("s", $email);
+    $stmt -> execute();
+    $result = $stmt -> get_result();
+
+    if ($result -> num_rows === 1) {
+        $customer = $result -> fetch_assoc();
+
+        if(password_verify($password, $customer["customer_pass"])) {
+            $_SESSION["customer_id"] = $customer["customer_id"];
+            $_SESSION["customer_name"] = $customer["Customer_name"];
+            $_SESSION["user_role"] = $customer["user_role"];
+
+            header("Location: ../index.php");
+            exit();
+
+        }
+
+        else {
+            $errorMessage = "Wrong email or passowrd.";
+        }
+    }
+
+    else {
+        $errorMessage = "Incorrect email or password";
+    }
+    $stmt -> close();
+    $conn -> close();
+    
+}
+elseif (isset($_GET["registered"])) {
+    $errorMessage = "Account created";
+}
+
+?>
 <!-- Login Page - Users sign in to their existing account -->
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +61,8 @@
     <div class = "wrapper">
         <!-- Large heading at the top -->
         <h1>Login</h1>
+
+        <form method="POST" action="login.php">
     
         
             <!-- Hidden error message that shows up if login fails -->
@@ -39,7 +87,7 @@
             </div>
             
             <!-- Submit button - triggers the login process via JavaScript -->
-            <button type="button" id="login-button" >Log In</button>
+            <button type="submit" id="login-button" >Log In</button>
 
             <!-- Link to signup page for users who don't have an account yet -->
             <p>Don't have an account? <a href="register.php"> Register</a></p>

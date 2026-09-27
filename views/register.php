@@ -1,3 +1,50 @@
+<?php
+$errorMessage = "";
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    require_once __DIR__ . "/../core/db_class.php";
+    $db = new Database();
+    $conn = $db -> getConnection();
+
+    $firstname = trim($_POST["firstname"]);
+    $lastname = trim($_POST["Lastname"]);
+    $email = trim($_POST["email"]);
+    $password = ($_POST["password"]);
+    $confirmPassword = $_POST["confirm-password"];
+
+
+    $customer_name = $firstname . " " . $lastname;
+
+    if($password !== $confirmPassword) {
+        $errorMessage = "Passwords are not the same.";
+    }
+    else {
+        $checkStmt = $conn->prepare("SELECT customer_id FROM customer WHERE customer_email = ?");
+        $checkStmt -> bind_param("s", $email);
+        $checkStmt -> execute();
+        $checkStmt -> store_result();
+
+        if ($checkStmt -> num_rows > 0) {
+            $errorMessage = "An account with the smae email already exists.";
+        }
+        else {
+            $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
+            $insertStmt = $conn -> prepare("INSERT INTO customer(customer_name, customer_email, customer_pass) VALUES (?, ?, ?)");
+            $insertStmt -> bind_param("sss", $customer_name, $email, $hashedpassword);
+
+            if ($insertStmt -> execute()) {
+                header("Location: login.php?registered=1");
+                exit();
+            }
+            else {
+                $errorMessage = "Error. Please try again";
+            }
+            $insertStmt -> close();
+        }
+        $checkStmt -> close();
+    }
+    $conn -> close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +63,8 @@
         <h1> Register </h1>
         <!-- Error message area - shows validation errors if form submission fails -->
         <p id ="error-message"></p>
-           
+
+        <form method="POST" action="register.php">
             <div>
                 <label for ="firstname-input">First Name:
                 </label>

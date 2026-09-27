@@ -9,4 +9,8 @@ class Database {
             die('Connection failed.'); 
         } 
     } 
+
+    public function getConnection() {
+        return $this->conn;
+    }
 } 
