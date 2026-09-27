@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if(password_verify($password, $customer["customer_pass"])) {
             $_SESSION["customer_id"] = $customer["customer_id"];
-            $_SESSION["customer_name"] = $customer["Customer_name"];
+            $_SESSION["customer_name"] = $customer["customer_name"];
             $_SESSION["user_role"] = $customer["user_role"];
 
             header("Location: ../index.php");
