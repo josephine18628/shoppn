@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <!-- Large heading -->
         <h1> Register </h1>
         <!-- Error message area - shows validation errors if form submission fails -->
-        <p id ="error-message"></p>
+        <p id ="error-message"><?php echo $errorMessage; ?></p>
 
         <form method="POST" action="register.php">
             <div>
@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
 
             <!-- Submit button - validates and submits the form -->
-            <button type="submit" id="signup-button" onclick="Validate(event)" >Sign Up</button>
+            <button type="submit" id="signup-button"  >Sign Up</button>
 
             <!-- Link back to login page for existing users -->
             <p>Already have an account? <a href="login.php">Log In</a></p>

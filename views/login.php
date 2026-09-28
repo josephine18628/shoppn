@@ -14,8 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt -> execute();
     $result = $stmt -> get_result();
 
-    if ($result -> num_rows === 1) {
-        $customer = $result -> fetch_assoc();
+    if ($stmt -> num_rows === 1) {
+        $stmt -> bind_result($customer_id, $customer_name, $customer_pass, $user_role);
+        $stmt -> fetch();
+        
 
         if(password_verify($password, $customer["customer_pass"])) {
             $_SESSION["customer_id"] = $customer["customer_id"];
@@ -65,7 +67,7 @@ elseif (isset($_GET["registered"])) {
     
         
             <!-- Hidden error message that shows up if login fails -->
-            <p id ="error-message"></p>
+            <p id ="error-message"><?php echo $errorMessage; ?></p>
           
             <div>
                 <label for = "email-input">Email:
