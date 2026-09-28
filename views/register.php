@@ -1,7 +1,12 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+$errorMessage = "";
 $errorMessage = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    require_once __DIR__ . "/../core/db_class.php";
+    require __DIR__ . "/../core/db_class.php";
     $db = new Database();
     $conn = $db -> getConnection();
 
@@ -10,6 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST["email"]);
     $password = ($_POST["password"]);
     $confirmPassword = $_POST["confirm-password"];
+    $country = trim($_POST["country"]);
+    $city = trim($_POST["city"]);
+    $contact = trim($_POST["contact"]);
 
 
     $customer_name = $firstname . " " . $lastname;
@@ -28,8 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         else {
             $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
-            $insertStmt = $conn -> prepare("INSERT INTO customer(customer_name, customer_email, customer_pass) VALUES (?, ?, ?)");
-            $insertStmt -> bind_param("sss", $customer_name, $email, $hashedpassword);
+            $insertStmt = $conn -> prepare("INSERT INTO customer(customer_name, customer_email, customer_pass, customer_country, customer_city, customer_contact) VALUES (?, ?, ?, ?, ?, ?)");
+            $insertStmt -> bind_param("ssssss", $customer_name, $email, $hashedpassword, $country, $city, $contact);
 
             if ($insertStmt -> execute()) {
                 header("Location: login.php?registered=1");
@@ -85,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div>
                 <label for ="password-input">Password:
                 </label>
-                <input type="password" name="password" id ="password-input" placeholder="Password" />
+                <input type="password"  required name="password" id ="password-input" placeholder="Password" />
             </div>
 
             <!-- Confirm password - user re-enters password to make sure they typed it correctly -->
@@ -93,6 +101,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for ="confirm-password-input">Confirm password: 
                 </label>    
                 <input type="password" required name="confirm-password" id ="confirm-password-input" placeholder="Confirm Password" />
+            </div>
+
+            <div>
+                <label for="country-input">Country:</label>
+                <input type="text" required name="country" id="country-input" placeholder="Country" />
+            </div>
+
+            <div>
+                <label for="city-input">City:</label>
+                <input type="text" required name="city" id="city-input" placeholder="City" />
+            </div>
+
+            <div>
+                <label for="contact-input">Phone number:</label>
+                <input type="text" required name="contact" id="contact-input" placeholder="Phone number" />
             </div>
 
             <!-- Submit button - validates and submits the form -->

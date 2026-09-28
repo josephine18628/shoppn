@@ -1,8 +1,13 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+$errorMessage = "";
 session_start();
 $errorMessage = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    require_once __DIR__ . "/../core/db_class.php";
+    require __DIR__ . "/../core/db_class.php";
     $db = new Database();
     $conn = $db -> getConnection();
 
@@ -12,17 +17,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt = $conn->prepare("SELECT customer_id, customer_name, customer_pass, user_role FROM customer WHERE customer_email = ?");
     $stmt -> bind_param("s", $email);
     $stmt -> execute();
-    $result = $stmt -> get_result();
+    $stmt -> store_result();
 
     if ($stmt -> num_rows === 1) {
         $stmt -> bind_result($customer_id, $customer_name, $customer_pass, $user_role);
         $stmt -> fetch();
         
 
-        if(password_verify($password, $customer["customer_pass"])) {
-            $_SESSION["customer_id"] = $customer["customer_id"];
-            $_SESSION["customer_name"] = $customer["customer_name"];
-            $_SESSION["user_role"] = $customer["user_role"];
+        if(password_verify($password, $customer_pass)) {
+            $_SESSION["customer_id"] = $customer_id;
+            $_SESSION["customer_name"] = $customer_name;
+            $_SESSION["user_role"] = $user_role;
 
             header("Location: ../index.php");
             exit();
@@ -63,11 +68,11 @@ elseif (isset($_GET["registered"])) {
         <!-- Large heading at the top -->
         <h1>Login</h1>
 
+        <p id="error-message">
+            <?php echo $errorMessage; ?>
+        </p>
+
         <form method="POST" action="login.php">
-    
-        
-            <!-- Hidden error message that shows up if login fails -->
-            <p id ="error-message"><?php echo $errorMessage; ?></p>
           
             <div>
                 <label for = "email-input">Email:
