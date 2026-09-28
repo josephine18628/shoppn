@@ -52,8 +52,7 @@ elseif (isset($_GET["registered"])) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login Page</title>
-    <!-- Using the authentication stylesheet which has the blue background and form styling -->
-    <link rel="stylesheet" href="../css/loginandsignup.css">
+    
    
 </head>
 <body>
