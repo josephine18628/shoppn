@@ -1,0 +1,31 @@
+<?php
+require_once __DIR__ . '/../core/core.php';
+require_once __DIR__ . '/../controllers/ProductController.php';
+require_admin();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    exit('Invalid request method.');
+}
+
+$id = $_POSt['brand_id'] ?? '';
+$name = trim(strip_tags($_POST['brand_name'] ?? ''));
+
+
+if (!is_numeric($id) || $id <= 0) {
+    $_SESSION['error'] = 'Invalid brand';
+    header('Location: ../views/admin/brand.php');
+    exit();
+}
+
+if($name == '' || strlen($name) > 100) {
+    $_SESSION['error'] = 'Brand name is necessary and must be below a 100 characters';
+    header('Location: ../views/admin/brand.php');
+    exit();
+}
+
+$controller = new ProductController();
+$controller -> updateBrand((int)$id, $name);
+
+$_SESSION['success'] = 'Brand updated';
+header('Location: ../views/admin/brand.php');
+exit();

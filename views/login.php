@@ -3,14 +3,14 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
+require __DIR__ . "/../core/db_class.php";
+$db = new Database();
+$conn = $db -> getConnection();
+
 $errorMessage = "";
 session_start();
 $errorMessage = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    require __DIR__ . "/../core/db_class.php";
-    $db = new Database();
-    $conn = $db -> getConnection();
-
     $email = trim($_POST["email"]);
     $password = ($_POST["password"]);
 
@@ -50,6 +50,7 @@ elseif (isset($_GET["registered"])) {
     $errorMessage = "Account created";
 }
 
+
 ?>
 <!-- Login Page - Users sign in to their existing account -->
 <!DOCTYPE html>
@@ -59,47 +60,55 @@ elseif (isset($_GET["registered"])) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login Page</title>
+    <link rel="stylesheet" href="../css/style.css" />
     
    
 </head>
 <body>
-    <!-- White card container centered on the blue background -->
-    <div class = "wrapper">
-        <!-- Large heading at the top -->
-        <h1>Login</h1>
-
-        <p id="error-message">
-            <?php echo $errorMessage; ?>
-        </p>
-
-        <form method="POST" action="login.php">
-          
-            <div>
-                <label for = "email-input">Email:
-                </label>
-                <input type ="email" required name ="email" id ="email-input" placeholder="Email" />
-            </div>
-
-            <div>
-                <label for ="password-input">Password:
-                </label>
-                <input type ="password" required name="password" id ="password-input" placeholder="Password" />
-            </div>
-
-            <!-- Remember me checkbox - lets users stay logged in -->
-            <div class="remember-me-container">
-                <input type="checkbox" name="remember_me" id="remember-me-checkbox" />
-                <label for="remember-me-checkbox">Remember Me</label>
-            </div>
-            
-            <!-- Submit button - triggers the login process via JavaScript -->
-            <button type="submit" id="login-button" >Log In</button>
-
-            <!-- Link to signup page for users who don't have an account yet -->
-            <p>Don't have an account? <a href="register.php"> Register</a></p>
+    <div class="login-layout">
         
-        </form>
+        <div class = "wrapper">
+            <!-- Large heading at the top -->
+            <h1>Login</h1>
+
+            <p id="error-message">
+                <?php echo $errorMessage; ?>
+            </p>
+
+            <form id="login-form" method="POST" action="login.php" novalidate>
+
+                <div class="form-group">
+                    <label for = "email-input">Email:
+                    </label>
+                    <input type ="email" required name ="email" id ="email-input" placeholder="Email" />
+                </div>
+
+                <div class="form-group">
+                    <label for ="password-input">Password:
+                    </label>
+                    <input type ="password" required name="password" id ="password-input" placeholder="Password" minlength="8" pattern="(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}" title="Ät least 8 characters, including a letter,a number, and a symbol."/>
+                </div>
+
+                <!-- Remember me checkbox - lets users stay logged in -->
+                <div class="remember-me-container">
+                    <input type="checkbox" name="remember_me" id="remember-me-checkbox" />
+                    <label class="form-label" for="remember-me-checkbox">Remember Me</label>
+                </div>
+            
+                <!-- Submit button - triggers the login process via JavaScript -->
+                <button type="submit" id="login-button" >Log In</button>
+
+                <!-- Link to signup page for users who don't have an account yet -->
+                <p>Don't have an account? <a href="register.php"> Register</a></p>
+        
+            </form>
+        </div>
+        
+
     </div>
+
+    <script src="../js/validate.js"></script>
+    
 
 
 
