@@ -65,4 +65,8 @@ class ProductController {
     public function searchProducts($query) {
         return $this -> productModel -> searchProducts($query);
     }
+
+    public function updateProduct($id, $cat, $brand, $title, $price, $desc, $image_filename, $keywords) {
+        return $this->productModel->updateProduct($id, $cat, $brand, $title, $price, $desc, $image_filename, $keywords);
+    }
 }

@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit('Invalid request method.');
 }
 
-$id = $_POSt['brand_id'] ?? '';
+$id = $_POST['brand_id'] ?? '';
 $name = trim(strip_tags($_POST['brand_name'] ?? ''));
 
 

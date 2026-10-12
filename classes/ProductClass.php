@@ -89,6 +89,16 @@ class ProductClass extends Database {
         return $ok;
     }
 
+    public function updateProduct($id, $cat, $brand, $title, $price, $desc, $image_filename, $keywords) {
+        $stmt = $this->conn->prepare(
+            'UPDATE products SET product_cat = ?, product_brand = ?, product_title = ?, product_price = ?,  product_desc = ?, product_image = ?, product_keywords = ? WHERE product_id = ?'
+        );
+        $stmt->bind_param('iisdsssi', $cat, $brand, $title, $price, $desc, $image_filename, $keywords, $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
+    }
+
     public function productById($id) {
         $stmt = $this->conn->prepare($this->productSelect . ' WHERE p.product_id = ?');
         $stmt->bind_param('i', $id);
