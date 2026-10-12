@@ -22,12 +22,12 @@ class ProductController {
         return $this->productModel->addcategory($name);
     }
 
-    public function getEverycategory() {
-        return $this->productModel->getEverycategory();
+    public function getEveryCategory() {
+        return $this->productModel->getEveryCategory();
     }
 
     public function updateCategory($id, $name) {
-        return $this->productModel->updatecategory($id, $name);
+        return $this->productModel->updateCategory($id, $name);
     }
 
     public function brandById($id) {
@@ -36,5 +36,33 @@ class ProductController {
 
     public function categoryById($id) {
         return $this->productModel->categoryById($id);
+    }
+
+    public function addProduct($cat, $brand, $title, $price, $desc, $image_filename, $keywords) {
+        return $this -> productModel -> addProduct($cat, $brand, $title, $price, $desc, $image_filename, $keywords);
+    }
+
+    public function productById($id) {
+        return $this -> productModel -> productById($id);
+    }
+
+    public function getEveryProduct() {
+        return $this -> productModel ->getEveryProduct();
+    }
+
+    public function getFeaturedProducts($limit = 6) {
+        return $this -> productModel -> getFeaturedProducts($limit);
+    }
+
+    public function productsByCategory($cat_id) {
+        return $this -> productModel -> productsByCategory($cat_id);
+    }
+
+    public function productsByBrand($brand_id) {
+        return $this -> productModel -> productsByBrand($brand_id);
+    }
+
+    public function searchProducts($query) {
+        return $this -> productModel -> searchProducts($query);
     }
 }

@@ -635,3 +635,35 @@ footer a { color: var(--violet-light); }
 .site-nav-dropdown-content a:hover {
     background: var(--violet-pale);
 }
+
+/* ---------- Admin product form ---------- */
+.admin-form {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 10px;
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.admin-form .form-group input,
+.admin-form .form-group select,
+.admin-form .form-group textarea {
+    border: 1px solid var(--violet-light);
+    background: var(--white);
+    font-family: inherit;
+}
+
+.admin-form .form-group input[type="file"] {
+    padding: 0.5rem;
+}
+
+.thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.navbar span {
+    color: var(--white);
+}

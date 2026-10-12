@@ -147,6 +147,65 @@ function wireLoginForm() {
     });
 }
 
+function wireProductForm() {
+    const form = document.getElementById('product-form');
+    if (!form) return; // not on this page — nothing to do
+
+    form.addEventListener('submit', function (e) {
+        clearFieldErrors(form);
+        let isValid = true;
+
+        const title = document.getElementById('product-title-input').value.trim();
+        const price = parseFloat(document.getElementById('product-price-input').value);
+        const cat = document.getElementById('product-cat-input').value;
+        const brand = document.getElementById('product-brand-input').value;
+        const image = document.getElementById('product-image-input').files[0];
+
+        if (title.length < 2) {
+            showFieldError('product-title-error', 'Enter a product title (at least 2 characters).');
+            isValid = false;
+        }
+
+        if (isNaN(price) || price <= 0) {
+            showFieldError('product-price-error', 'Enter a price greater than 0.');
+            isValid = false;
+        }
+
+        if (!cat) {
+            showFieldError('product-cat-error', 'Please choose a category.');
+            isValid = false;
+        }
+
+        if (!brand) {
+            showFieldError('product-brand-error', 'Please choose a brand.');
+            isValid = false;
+        }
+
+        if (!image) {
+            showFieldError('product-image-error', 'Please choose a product image.');
+            isValid = false;
+        } else if (ALLOWED_IMAGE_TYPES.indexOf(image.type) === -1) {
+            showFieldError('product-image-error', 'The image must be a JPG, PNG, GIF or WEBP file.');
+            isValid = false;
+        } else if (image.size > MAX_IMAGE_BYTES) {
+            showFieldError('product-image-error', 'The image is too large (max 2 MB).');
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            return;
+        }
+
+        const btn = document.getElementById('product-button');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+        }
+    });
+}
+
+
 function showFieldError(id, message) {
     const el = document.getElementById(id);
     if (el) el.textContent = message;
