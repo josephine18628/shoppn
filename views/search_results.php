@@ -20,6 +20,28 @@ require_once __DIR__ . '/layout/header.php';
 
 <h1>Search results</h1>
 
+<?php
+if (isset($_SESSION['success'])) {
+    $message = $_SESSION['success'];
+
+    unset($_SESSION['success']);
+
+    echo '<p class="success-message">' . htmlspecialchars($message) . '</p>';
+}
+?>
+
+
+<?php
+if (isset($_SESSION['error'])) {
+    $message = $_SESSION['error'];
+
+    unset($_SESSION['error']);
+
+    echo '<p class="error-message">' . htmlspecialchars($message) . '</p>';
+}
+?>
+
+
 <?php if($query === ''): ?>
     <p>Type in the search box above to find products.</p>
 <?php else: ?>
@@ -53,6 +75,8 @@ require_once __DIR__ . '/layout/header.php';
                     <h3><?= htmlspecialchars($product['product_title']) ?></h3>
                     <p class="price">GH&#8373; <?= number_format($product['product_price'], 2) ?></p>
                     <a class="btn btn-small" href="single_product.php?pro_id=<?= (int)$product['product_id'] ?>">Details</a>
+                    <a class="btn btn-small" href="../actions/add_to_cart_action.php?add_cart=<?= (int)$product['product_id'] ?>">Add to Cart</a>
+
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>

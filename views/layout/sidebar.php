@@ -8,7 +8,7 @@ $brands = $sidebarController->getEveryBrand();
 <aside id="sidebar">
     <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close menu">✕</button>
     <h3>Categories</h3>
-    <u1>
+    <ul>
         <?php if (empty($categories)): ?>
             <li>No categories yet</li>
         <?php else: ?>
@@ -16,10 +16,10 @@ $brands = $sidebarController->getEveryBrand();
                 <li><a href="index.php?cat=<?= $category['cat_id'] ?>"><?= htmlspecialchars($category['cat_name']) ?></a></li>
             <?php endforeach; ?>
         <?php endif; ?>
-    </u1>
+    </ul>
 
     <h3>Brands</h3>
-    <u1>
+    <ul>
         <?php if (empty($brands)): ?>
             <li>No brands yet</li>
         <?php else: ?>
@@ -27,5 +27,5 @@ $brands = $sidebarController->getEveryBrand();
                 <li><a href="index.php?brand=<?= $brand['brand_id'] ?>"><?= htmlspecialchars($brand['brand_name']) ?></a></li>
             <?php endforeach; ?>
         <?php endif; ?>
-    </u1>
+    </ul>
 </aside>

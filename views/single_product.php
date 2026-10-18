@@ -16,10 +16,32 @@ if(!$product) {
 
 require_once __DIR__ . '/layout/header.php';
 ?>
+
+<?php
+if (isset($_SESSION['success'])) {
+    $message = $_SESSION['success'];
+
+    unset($_SESSION['success']);
+
+    echo '<p class="success-message">' . htmlspecialchars($message) . '</p>';
+}
+?>
+
+
+<?php
+if (isset($_SESSION['error'])) {
+    $message = $_SESSION['error'];
+
+    unset($_SESSION['error']);
+
+    echo '<p class="error-message">' . htmlspecialchars($message) . '</p>';
+}
+?>
+
 <p><a href="../index.php"> &larr; Back to all products</a></p>
 <section class="product-detail">
     <div class="product-detail-image">
-        <?php if (!empty($product['product-image'])): ?>
+        <?php if (!empty($product['product_image'])): ?>
             <img src="../images/products/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['product_title']) ?>">
         <?php else: ?>
             <div class="no-image">No image</div>
@@ -29,7 +51,7 @@ require_once __DIR__ . '/layout/header.php';
     <div class="product-detail-info">
         <h1><?= htmlspecialchars($product['product_title']) ?></h1>
         <p class="price">GH&#8373; <?= number_format($product['product_price'], 2) ?></p>
-        <p claass="meta">
+        <p class="meta">
             <?php
             $categoryId = (int)$product['product_cat'];
             $categoryName = htmlspecialchars($product['cat_name']);
@@ -48,6 +70,7 @@ require_once __DIR__ . '/layout/header.php';
         <?php if (!empty($product['product_keywords'])): ?>
             <p class="meta">Keywords: <?= htmlspecialchars($product['product_keywords']) ?></p>
         <?php endif; ?>
+        <a class="btn" href="../actions/add_to_cart_action.php?add_cart=<?= (int)$product['product_id'] ?>">Add to Cart</a>
         
     </div>
 </section>

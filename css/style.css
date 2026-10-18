@@ -667,3 +667,96 @@ footer a { color: var(--violet-light); }
 .navbar span {
     color: var(--white);
 }
+
+/* ---------------- Cart ---------------- */
+
+.btn { display: inline-block; text-decoration: none; }
+.btn:hover { text-decoration: none; }
+.btn-small { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+
+.btn-secondary,
+.btn.btn-secondary {
+    background: var(--white);
+    color: var(--violet);
+    border: 1px solid var(--violet);
+}
+.btn-secondary:hover,
+.btn.btn-secondary:hover { background: var(--violet-pale); color: var(--violet-dark); }
+
+.btn-link {
+    background: none;
+    color: var(--error);
+    padding: 0;
+    font-size: 0.9rem;
+    text-decoration: underline;
+}
+.btn-link:hover { background: none; color: var(--error); }
+
+.cart-table { width: 100%; background: var(--white); }
+.cart-table td { vertical-align: middle; }
+
+.cart-product { display: flex; align-items: center; gap: 0.75rem; }
+.cart-product img,
+.cart-product .no-image {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+.cart-product .no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--violet-pale);
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.qty-control { display: inline-flex; align-items: center; }
+.qty-btn {
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+.qty-btn:first-child { border-radius: 6px 0 0 6px; }
+.qty-btn:last-child { border-radius: 0 6px 6px 0; }
+.qty-control .qty-input {
+    width: 3.5rem;
+    height: 2.2rem;
+    text-align: center;
+    border-radius: 0;
+    padding: 0.2rem;
+}
+
+.cart-table tfoot td { font-weight: 700; border-top: 2px solid var(--violet-light); }
+.cart-total-label { text-align: right; }
+
+.cart-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+.cart-actions .btn:last-child { margin-left: auto; }
+
+.cart-empty { background: var(--white); padding: 2rem; border-radius: 10px; text-align: center; }
+
+/* Cart table becomes stacked cards on phones */
+@media (max-width: 640px) {
+    .cart-table thead { display: none; }
+    .cart-table, .cart-table tbody, .cart-table tr, .cart-table td { display: block; width: 100%; }
+    .cart-table tr { border-bottom: 1px solid var(--violet-light); padding: 0.5rem 0; }
+    .cart-table td[data-label]::before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: inline-block;
+        width: 6.5rem;
+        color: var(--violet-dark);
+    }
+    .cart-table tfoot tr { display: flex; justify-content: space-between; }
+    .cart-table tfoot td { width: auto; border: none; }
+    .cart-actions .btn:last-child { margin-left: 0; }
+}

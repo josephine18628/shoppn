@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit('Invalid request method.');
 }
 
+// Gets the brand name from the form (or an empty string if it is missing), then removes any HTML tags and extra spaces from the start and end.
 $name = trim(strip_tags($_POST['brand_name'] ?? ''));
 
 if ($name === '' || strlen($name) > 100) {

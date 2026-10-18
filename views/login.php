@@ -1,55 +1,15 @@
 <?php
+require_once __DIR__ . '/../core/core.php';
 
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-
-require __DIR__ . "/../core/db_class.php";
-$db = new Database();
-$conn = $db -> getConnection();
-
+// Message to show above the form (set by login_action.php or the cart)
 $errorMessage = "";
-session_start();
-$errorMessage = "";
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = trim($_POST["email"]);
-    $password = ($_POST["password"]);
-
-    $stmt = $conn->prepare("SELECT customer_id, customer_name, customer_pass, user_role FROM customer WHERE customer_email = ?");
-    $stmt -> bind_param("s", $email);
-    $stmt -> execute();
-    $stmt -> store_result();
-
-    if ($stmt -> num_rows === 1) {
-        $stmt -> bind_result($customer_id, $customer_name, $customer_pass, $user_role);
-        $stmt -> fetch();
-        
-
-        if(password_verify($password, $customer_pass)) {
-            $_SESSION["customer_id"] = $customer_id;
-            $_SESSION["customer_name"] = $customer_name;
-            $_SESSION["user_role"] = $user_role;
-
-            header("Location: ../index.php");
-            exit();
-
-        }
-
-        else {
-            $errorMessage = "Wrong email or passowrd.";
-        }
-    }
-
-    else {
-        $errorMessage = "Incorrect email or password";
-    }
-    $stmt -> close();
-    $conn -> close();
-    
+if (isset($_SESSION["error"])) {
+    $errorMessage = $_SESSION["error"];
+    unset($_SESSION["error"]);
 }
 elseif (isset($_GET["registered"])) {
     $errorMessage = "Account created";
 }
-
 
 ?>
 <!-- Login Page - Users sign in to their existing account -->
@@ -75,7 +35,7 @@ elseif (isset($_GET["registered"])) {
                 <?php echo $errorMessage; ?>
             </p>
 
-            <form id="login-form" method="POST" action="login.php" novalidate>
+            <form id="login-form" method="POST" action="../actions/login_action.php" novalidate>
 
                 <div class="form-group">
                     <label for = "email-input">Email:

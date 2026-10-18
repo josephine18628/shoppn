@@ -7,17 +7,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit('Invalid request method.');
 }
 
+// Saves an error message in the session and sends the user back to the admin product page.
 function back_error($message) {
     $_SESSION['error'] = $message;
     header('Location: ../views/admin/product.php');
     exit();
 }
 
+// Gets a value from the submitted form using its field name, removes any HTML tags and extra spaces from it, and returns an empty string if the field is missing or is not text.
 function post_text($key) {
     $value = $_POST[$key] ?? '';
     return is_string($value) ? trim(strip_tags($value)) : '';
 }
 
+// Gets the product title, description and keywords from the form as clean text
+// FILTER_VALIDATE_INPUT gets the category and brand IDs as whole numbers of 1 or more, and gets the price as a decimal number.
 $title    = post_text('product_title');
 $desc     = post_text('product_desc');
 $keywords = post_text('product_keywords');
@@ -50,6 +54,7 @@ if (!$controller->categoryById($cat) || !$controller->brandById($brand)) {
 $maxBytes = 2 * 1024 * 1024; // 2 MB
 $allowed  = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp'];
 
+// Checks that an image was chosen, that it is not bigger than 2 MB, and that it uploaded without problems, and sends the user back with an error message if any of these checks fail.
 if (!isset($_FILES['product_image']) || $_FILES['product_image']['error'] === UPLOAD_ERR_NO_FILE) {
     back_error('Choose an image for the product.');
 }
@@ -62,12 +67,14 @@ if ($file['error'] !== UPLOAD_ERR_OK) {
     back_error('Image upload failed. Try again.');
 }
 
+//checks whether the uploaded file is a valid image and whether its MIME type is in the $allowed list, and if either check fails, it calls back_error() to display an error message stating that only JPG, PNG, GIF, or WEBP images are allowed.
 $info = @getimagesize($file['tmp_name']);
 if ($info === false || !isset($allowed[$info['mime']])) {
     back_error('The image must be a JPG, PNG, GIF or WEBP file.');
 }
 
 $dir = __DIR__ . '/../images/products/';
+//checks whether $dir exists as a directory and, if it does not, attempts to create it with permissions 0775, including any necessary parent directories, and calls back_error() with an error message if creation fails.
 if (!is_dir($dir) && !mkdir($dir, 0775, true)) {
     back_error('Could not create the images/products folder.');
 }
@@ -75,6 +82,7 @@ if (!is_writable($dir)) {
     back_error('The images/products folder is not writable by the web server.');
 }
 
+///generates a random 16-character hexadecimal filename using bin2hex(random_bytes(8)), adds the correct file extension based on the image’s MIME type from $allowed[$info['mime']], and stores the complete filename in $filename.
 $filename = bin2hex(random_bytes(8)) . '.' . $allowed[$info['mime']];
 
 if (!move_uploaded_file($file['tmp_name'], $dir . $filename)) {
@@ -89,6 +97,7 @@ try {
     $saved = false;
 }
 
+///checks whether saving the product failed, deletes the uploaded image file using unlink() if it exists, and calls back_error() to display an error message asking the user to try again.
 if (!$saved) {
     @unlink($dir . $filename);
     back_error('Could not save the product. Try again.');
