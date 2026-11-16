@@ -34,4 +34,19 @@ class CartController {
         return $this->cartModel->updateQty($product_id, $new_qty, $ip);
     }
 
+    public function processPayment($customer_id, $ip, $reference, $amount) {
+        return $this->cartModel->processPayment($customer_id, $ip, $reference, $amount);
+    }
+
+    public function getOrderById($order_id) {
+        return $this->cartModel->getOrderById($order_id);
+    }
+
+    public function getOrdersByCustomer($customer_id) {
+        return $this->cartModel->getOrdersByCustomer($customer_id);
+    }
+
+    public function getRecentlyPurchased($customer_id, $limit = 4) {
+        return $this->cartModel->getRecentlyPurchased($customer_id, $limit);
+    }
 }

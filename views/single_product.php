@@ -14,6 +14,15 @@ if(!$product) {
     redirect('../index.php');
 }
 
+// Recommendation: up to 4 other products from the same category
+$similar = [];
+foreach ($controller -> productsByCategory((int)$product['product_cat']) as $other) {
+    if ((int)$other['product_id'] !== (int)$product['product_id']) {
+        $similar[] = $other;
+    }
+}
+$similar = array_slice($similar, 0, 4);
+
 require_once __DIR__ . '/layout/header.php';
 ?>
 
@@ -74,4 +83,23 @@ if (isset($_SESSION['error'])) {
         
     </div>
 </section>
+
+<?php if (!empty($similar)): ?>
+    <h2>You May Also Like</h2>
+    <div class="product-grid">
+        <?php foreach ($similar as $other): ?>
+            <div class="product-card">
+                <?php if (!empty($other['product_image'])): ?>
+                    <img src="../images/products/<?= htmlspecialchars($other['product_image']) ?>" alt="<?= htmlspecialchars($other['product_title']) ?>">
+                <?php else: ?>
+                    <div class="no-image">No image</div>
+                <?php endif; ?>
+                <h3><?= htmlspecialchars($other['product_title']) ?></h3>
+                <p class="price">GH&#8373; <?= number_format((float)$other['product_price'], 2) ?></p>
+                <a class="btn btn-small" href="single_product.php?pro_id=<?= (int)$other['product_id'] ?>">Details</a>
+                <a class="btn btn-small" href="../actions/add_to_cart_action.php?add_cart=<?= (int)$other['product_id'] ?>">Add to Cart</a>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 <?php require_once __DIR__ . '/layout/footer.php'; ?>

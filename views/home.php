@@ -3,6 +3,7 @@
 
 require_once __DIR__ . '/../core/core.php';
 require_once __DIR__ . '/../controllers/ProductController.php';
+require_once __DIR__ . '/../controllers/CartController.php';
 
 $controller = new ProductController();
 
@@ -20,6 +21,13 @@ if ($catId) {
     $heading  = $brand ? 'Brand: ' . $brand['brand_name'] : 'Products';
 } else {
     $products = $controller->getFeaturedProducts(6);
+}
+
+// Recommendation: products this customer bought before
+$recent = [];
+if (is_logged_in() && !$catId && !$brandId) {
+    $cartController = new CartController();
+    $recent = $cartController->getRecentlyPurchased((int)$_SESSION['customer_id'], 4);
 }
 
 require_once __DIR__ . '/layout/header.php';
@@ -92,6 +100,24 @@ if (isset($_SESSION['error'])) {
     <?php require_once __DIR__ . '/layout/sidebar.php'; ?>
 
     <section class="product-area">
+        <?php if (!empty($recent)): ?>
+            <h2>Recently Purchased</h2>
+            <div class="product-grid">
+                <?php foreach ($recent as $product): ?>
+                    <div class="product-card">
+                        <?php if (!empty($product['product_image'])): ?>
+                            <img src="<?= ROOT_PREFIX ?>images/products/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['product_title']) ?>">
+                        <?php else: ?>
+                            <div class="no-image">No image</div>
+                        <?php endif; ?>
+                        <h3><?= htmlspecialchars($product['product_title']) ?></h3>
+                        <p class="price">GH&#8373; <?= number_format((float)$product['product_price'], 2) ?></p>
+                        <a class="btn btn-small" href="<?= ROOT_PREFIX ?>actions/add_to_cart_action.php?add_cart=<?= (int)$product['product_id'] ?>">Buy Again</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
         <h2><?= htmlspecialchars($heading) ?></h2>
         <?php if ($catId || $brandId): ?>
             <p><a href="<?= ROOT_PREFIX ?>index.php">&larr; Show featured products</a></p>

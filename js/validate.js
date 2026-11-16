@@ -15,9 +15,22 @@ const phoneRegex = /^[0-9\s\-]{6,15}$/;
 // one letter, one digit, and one symbol.
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
+// Full phone number with country code, e.g. +233241234567 (used on the edit account form)
+const fullPhoneRegex = /^\+?[0-9\s\-]{6,15}$/;
+
+// Same rules as the PHP upload checks
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024; // 2 MB
+
 document.addEventListener('DOMContentLoaded', function () {
     wireRegisterForm();
     wireLoginForm();
+    wireProductForm();
+    wireNameForm('brand-form', 'brand_name', 'brand-name-error', 'Brand name');
+    wireNameForm('category-form', 'cat_name', 'cat-name-error', 'Category name');
+    wireEditAccountForm();
+    wireChangePassForm();
+    wireDeleteAccountForm();
 });
 
 function wireRegisterForm() {
@@ -160,6 +173,8 @@ function wireProductForm() {
         const cat = document.getElementById('product-cat-input').value;
         const brand = document.getElementById('product-brand-input').value;
         const image = document.getElementById('product-image-input').files[0];
+        // When editing, a new image is optional (the current one is kept)
+        const editing = form.dataset.editing === '1';
 
         if (title.length < 2) {
             showFieldError('product-title-error', 'Enter a product title (at least 2 characters).');
@@ -182,8 +197,10 @@ function wireProductForm() {
         }
 
         if (!image) {
-            showFieldError('product-image-error', 'Please choose a product image.');
-            isValid = false;
+            if (!editing) {
+                showFieldError('product-image-error', 'Please choose a product image.');
+                isValid = false;
+            }
         } else if (ALLOWED_IMAGE_TYPES.indexOf(image.type) === -1) {
             showFieldError('product-image-error', 'The image must be a JPG, PNG, GIF or WEBP file.');
             isValid = false;
@@ -205,6 +222,114 @@ function wireProductForm() {
     });
 }
 
+// Brand and category forms: one name field, 1 to 100 characters
+function wireNameForm(formId, inputId, errorId, label) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+        clearFieldErrors(form);
+        const name = document.getElementById(inputId).value.trim();
+        if (name.length < 1 || name.length > 100) {
+            showFieldError(errorId, label + ' is required (100 characters max).');
+            e.preventDefault();
+        }
+    });
+}
+
+function wireEditAccountForm() {
+    const form = document.getElementById('edit-account-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+        clearFieldErrors(form);
+        let isValid = true;
+
+        const name = document.getElementById('name-input').value.trim();
+        const email = document.getElementById('email-input').value.trim();
+        const city = document.getElementById('city-input').value.trim();
+        const contact = document.getElementById('contact-input').value.trim();
+        const image = document.getElementById('image-input').files[0];
+
+        if (name.length < 2 || name.length > 100) {
+            showFieldError('name-error', 'Name must be 2 to 100 characters.');
+            isValid = false;
+        }
+        if (!emailRegex.test(email) || email.length > 50) {
+            showFieldError('email-error', 'Enter a valid email address (50 characters max).');
+            isValid = false;
+        }
+        if (city.length < 1 || city.length > 30) {
+            showFieldError('city-error', 'City is required (30 characters max).');
+            isValid = false;
+        }
+        if (!fullPhoneRegex.test(contact)) {
+            showFieldError('contact-error', 'Enter a valid phone number, e.g. +233241234567.');
+            isValid = false;
+        }
+        if (image && ALLOWED_IMAGE_TYPES.indexOf(image.type) === -1) {
+            showFieldError('image-error', 'The picture must be a JPG, PNG, GIF or WEBP file.');
+            isValid = false;
+        } else if (image && image.size > MAX_IMAGE_BYTES) {
+            showFieldError('image-error', 'The picture is too large (max 2 MB).');
+            isValid = false;
+        }
+
+        if (!isValid) e.preventDefault();
+    });
+}
+
+function wireChangePassForm() {
+    const form = document.getElementById('change-pass-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+        clearFieldErrors(form);
+        let isValid = true;
+
+        const current = document.getElementById('current-password-input').value;
+        const password = document.getElementById('password-input').value;
+        const confirmPassword = document.getElementById('confirm-password-input').value;
+
+        if (current.length < 1) {
+            showFieldError('current-password-error', 'Enter your current password.');
+            isValid = false;
+        }
+        if (!passwordRegex.test(password)) {
+            showFieldError('password-error', 'Password needs 8+ characters, a letter, a number, and a symbol.');
+            isValid = false;
+        }
+        if (password !== confirmPassword) {
+            showFieldError('confirm-password-error', 'Passwords do not match.');
+            isValid = false;
+        }
+
+        if (!isValid) e.preventDefault();
+    });
+}
+
+function wireDeleteAccountForm() {
+    const form = document.getElementById('delete-account-form');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+        clearFieldErrors(form);
+        let isValid = true;
+
+        if (document.getElementById('password-input').value.length < 1) {
+            showFieldError('password-error', 'Enter your password to confirm.');
+            isValid = false;
+        }
+        if (!document.getElementById('confirm-delete-input').checked) {
+            showFieldError('confirm-delete-error', 'Tick the box to confirm.');
+            isValid = false;
+        }
+
+        if (!isValid || !confirm('Delete your account permanently?')) {
+            e.preventDefault();
+        }
+    });
+}
 
 function showFieldError(id, message) {
     const el = document.getElementById(id);
